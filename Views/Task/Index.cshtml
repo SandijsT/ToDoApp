@@ -9,24 +9,31 @@
 {
     <h2>MODEL IS NULL</h2>
 }
+<a asp-action="Create">Add new task</a>
 <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
             <th scope="col">Id</th>
-            <th scope="col">Task Is Complete</th>
+            <th scope="col">Task Is Completed</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
             <th scope="col">Deadline</th>
+            <th scope="col">Options</th>
         </tr>
         </thead>
         @foreach(var task in Model)
         {
             <tr>
-                <td>@task.Id</td>
+                <td>@(Model.IndexOf(task) + 1)</td>
                 <td>@task.IsDone</td>
                 <td>@task.Name</td>
                 <td>@task.Description</td>
                 <td>@task.Deadline</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@task.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@task.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@task.Id">Delete</a>
+                </td>
             </tr>
         }
     </table>
