@@ -1,14 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace ToDo.Models.Entities
 {
-    public class ATask
+    public class TaskList
     {
         public int Id { get; set; }
-        public bool IsDone { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime Deadline { get; set; }
-        public Label Label { get; set; }
+        public List<ATask> Tasks { get; set; }
     }
 }
