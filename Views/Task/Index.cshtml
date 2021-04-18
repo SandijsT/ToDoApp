@@ -1,10 +1,15 @@
-﻿@{
+﻿@model IEnumerable<ToDo.Models.Entities.TaskList>
+
+@{
     ViewBag.Title = "Your Tasks";
     Layout = "_Layout";
 }
-
-<h2>title</h2>
-
+<h2>
+    @foreach (var list in Model)
+    {
+        @Html.DisplayFor(name => list.Name)
+    }
+</h2>
 @if (Model == null)
 {
     <h2>MODEL IS NULL</h2>
@@ -23,20 +28,23 @@ else
                 <th scope="col">Options</th>
             </tr>
             </thead>
-            @foreach(var task in Model)
+            @foreach (var list in Model)
             {
-                <tr>
-                    <td>@(Model.IndexOf(task) + 1)</td>
-                    <td>@task.IsDone</td>
-                    <td>@task.Name</td>
-                    <td>@task.Description</td>
-                    <td>@task.Deadline</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@task.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@task.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@task.Id">Delete</a>
-                    </td>
-                </tr>
+                @foreach (var task in list.Tasks)
+                {
+                    <tr>
+                        <td>@(list.Tasks.IndexOf(task) + 1)</td>
+                        <td>@Html.DisplayFor(modelItem => task.IsDone)</td>
+                        <td>@Html.DisplayFor(modelItem => task.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => task.Description)</td>
+                        <td>@Html.DisplayFor(modelItem => task.Deadline)</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@task.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@task.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@task.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
             }
         </table>
 }

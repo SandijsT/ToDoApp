@@ -1,0 +1,32 @@
+﻿@model IEnumerable<ToDo.Models.Entities.TaskList>
+
+@{
+    ViewBag.Title = "Your Task Lists";
+    Layout = "_Layout";
+}
+
+<h2>Task lists:</h2>
+
+<div>
+    <a asp-action="Create">Add new task list</a>
+    @foreach (var list in Model)
+    {
+        <table class="table table-striped">
+            <a asp-action="Edit" asp-route-id="@list.Id">Edit</a>
+            <thead class="thead-dark">
+            <tr>@Html.DisplayFor(model => list.Name)</tr>
+            </thead>
+            <tbody>
+            @foreach (var task in list.Tasks)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => task.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => task.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => task.Deadline)</td>
+                    <td>@Html.DisplayFor(modelItem => task.IsDone)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

@@ -19,10 +19,11 @@ namespace ToDo.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            var tasks = await _context.Tasks.ToListAsync();
-            return View(tasks);
+            var lists = _context.TaskLists.Include(x => x.Tasks).AsNoTracking();
+            var tasks = lists.Where(x => x.Id == id);
+            return View(await tasks.ToListAsync());
         }
         
         public IActionResult Create()
@@ -45,6 +46,10 @@ namespace ToDo.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             return View(task);
         }
         
@@ -57,13 +62,22 @@ namespace ToDo.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            if (task == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             return View(task);
         }
         
         [HttpGet, ActionName("Details")]
         public async Task<IActionResult> Details(int? id)
         {
+        
             var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             return View(task);
         }
         
@@ -96,5 +110,7 @@ namespace ToDo.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        
+
     }
 }
