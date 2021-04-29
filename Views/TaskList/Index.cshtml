@@ -23,7 +23,24 @@
                     <td>@Html.DisplayFor(modelItem => task.Name)</td>
                     <td>@Html.DisplayFor(modelItem => task.Description)</td>
                     <td>@Html.DisplayFor(modelItem => task.Deadline)</td>
-                    <td>@Html.DisplayFor(modelItem => task.IsDone)</td>
+                     <td>@Html.CheckBoxFor(model => task.IsDone, new { onclick=$"customMethod({task.Id})", id = $"cb{task.Id}"})</td>
+                        <script>
+                        function customMethod(cbId){
+                            let val = $("#cb" + cbId).is(':checked');
+                            console.log(val);
+                             $.ajax({
+                                     url: "@Url.Action("CheckBox", "Task")",
+                                     type: "POST",
+                                     async: true,
+                                     dataType: "json",
+                             
+                                     data: {
+                                         id: cbId,
+                                         value: val,
+                                     }
+                                 });
+                             }
+                        </script>
                 </tr>
             }
             </tbody>

@@ -10,5 +10,7 @@ namespace ToDo.Models.Entities
         public string Description { get; set; }
         public DateTime Deadline { get; set; }
         public Label Label { get; set; }
+        
+        public TaskList TaskList { get; set; }
     }
 }

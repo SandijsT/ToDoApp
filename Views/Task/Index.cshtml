@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<ToDo.Models.Entities.TaskList>
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.min.js"></script>
 @{
     ViewBag.Title = "Your Tasks";
     Layout = "_Layout";
@@ -16,7 +17,10 @@
 }
 else
 {
-    <a asp-action="Create">Add new task</a>
+    @foreach (var list in Model)
+    {
+        <a asp-action="Create" asp-route-listId="@Model.First().Id">Add new task</a>
+    }
     <table class="table table-striped">
             <thead class="thead-dark">
             <tr>
@@ -34,14 +38,32 @@ else
                 {
                     <tr>
                         <td>@(list.Tasks.IndexOf(task) + 1)</td>
-                        <td>@Html.DisplayFor(modelItem => task.IsDone)</td>
+                        <td>@Html.CheckBoxFor(model => task.IsDone, new { onclick=$"customMethod({task.Id})", id = $"cb{task.Id}"})</td>
+                        <script>
+                        function customMethod(cbId){
+                            let val = $("#cb" + cbId).is(':checked');
+                            console.log(@list.Id);
+                             $.ajax({
+                                     url: "@Url.Action("CheckBox", "Task")",
+                                     type: "POST",
+                                     async: true,
+                                     dataType: "json",
+                             
+                                     data: {
+                                         id: cbId,
+                                         value: val,
+                                     }
+                                 });
+                             }
+                        </script>
+                        <td>@Html.DisplayFor(modelItem => task.Id)</td>
                         <td>@Html.DisplayFor(modelItem => task.Name)</td>
                         <td>@Html.DisplayFor(modelItem => task.Description)</td>
                         <td>@Html.DisplayFor(modelItem => task.Deadline)</td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@task.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@task.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@task.Id">Delete</a>
+                            <a asp-action="Edit" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id">Delete</a>
                         </td>
                     </tr>
                 }
