@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDo.Data;
@@ -7,7 +9,7 @@ using ToDo.Models.Entities;
 
 namespace ToDo.Controllers
 {
-    public class TaskListController : Controller
+    public class TaskListController : BaseController
     {
         private readonly TaskContext _context;
 
@@ -15,7 +17,8 @@ namespace ToDo.Controllers
         {
             _context = context;
         }
-
+        
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var taskLists = _context.TaskLists.Include(x => x.Tasks).AsNoTracking();

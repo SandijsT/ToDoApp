@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using ToDo.Models.Entities;
 
 namespace ToDo.Controllers
 {
-    public class TaskController : Controller
+    public class TaskController : BaseController
     {
         private readonly TaskContext _context;
 
@@ -20,7 +21,7 @@ namespace ToDo.Controllers
         {
             _context = context;
         }
-
+        
         public async Task<IActionResult> Index(int? id)
         {
             if (id == null)
@@ -44,6 +45,7 @@ namespace ToDo.Controllers
             return View(task);
         }
         
+        [Authorize]
         [HttpPost, ActionName("Create")]
         public async Task<IActionResult> CreateConfirmed([Bind("IsDone,Deadline,Description,Name")] ATask task, int? id)
         {
@@ -56,9 +58,10 @@ namespace ToDo.Controllers
             _context.Tasks.Add(task).Entity.TaskList = list;
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", new {id = id});
+            return RedirectToAction("Index", new {id});
         }
         
+        [Authorize]
         public async Task<IActionResult> Edit(int? id, int? listId)
         {
             var task = await _context.Tasks.FindAsync(id);
@@ -77,6 +80,7 @@ namespace ToDo.Controllers
             return View(task);
         }
         
+        [Authorize]
         [HttpPost, ActionName("Edit")]
         public async Task<IActionResult> EditTask(int id, int listId)
         {
@@ -91,6 +95,7 @@ namespace ToDo.Controllers
             return RedirectToAction("Index", new {id = listId});
         }
         
+        [Authorize]
         [HttpGet, ActionName("Details")]
         public async Task<IActionResult> Details(int? id, int? listId)
         {
@@ -111,6 +116,7 @@ namespace ToDo.Controllers
             return View(task);
         }
         
+        [Authorize]
         public async Task<IActionResult> Delete(int? id, int? listId)
         {
             var task = await _context.Tasks.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
@@ -128,6 +134,7 @@ namespace ToDo.Controllers
             return View(task);
         }
         
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id, int listId)
         {
@@ -141,6 +148,7 @@ namespace ToDo.Controllers
             return RedirectToAction("Index", new {id = listId});
         }
         
+        [Authorize]
         [HttpPost]
         public async void CheckBox(int? id, bool value)
         {
