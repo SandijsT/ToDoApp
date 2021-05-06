@@ -13,6 +13,7 @@ using ToDo.Models.Entities;
 
 namespace ToDo.Controllers
 {
+    [Authorize]
     public class TaskController : BaseController
     {
         private readonly TaskContext _context;
@@ -24,11 +25,13 @@ namespace ToDo.Controllers
         
         public async Task<IActionResult> Index(int? id)
         {
+
             if (id == null)
             {
                 return RedirectToAction("Index", "TaskList");
             }
             var lists = _context.TaskLists.Include(x => x.Tasks).AsNoTracking();
+            
             var tasks = lists.Where(x => x.Id == id);
             
             return View(await tasks.ToListAsync());
@@ -36,16 +39,22 @@ namespace ToDo.Controllers
         
         public async Task<IActionResult> Create(int? listId)
         {
+            
             if (listId == null)
             {
                 return RedirectToAction("Index", "TaskList");
+                
             }
+            if (!await IsAuthenticated(listId ?? default(int)))
+            {
+                return Unauthorized();
+            }
+            
             var list = await _context.TaskLists.FindAsync(listId);
             var task = new ATask {TaskList = list};
             return View(task);
         }
         
-        [Authorize]
         [HttpPost, ActionName("Create")]
         public async Task<IActionResult> CreateConfirmed([Bind("IsDone,Deadline,Description,Name")] ATask task, int? id)
         {
@@ -61,13 +70,17 @@ namespace ToDo.Controllers
             return RedirectToAction("Index", new {id});
         }
         
-        [Authorize]
         public async Task<IActionResult> Edit(int? id, int? listId)
         {
             var task = await _context.Tasks.FindAsync(id);
             if (task == null)
             {
                 return RedirectToAction("Index", "TaskList");
+            }
+            
+            if (!await IsAuthenticated(listId ?? default(int)))
+            {
+                return Unauthorized();
             }
 
             var list = await _context.TaskLists.FindAsync(listId);
@@ -80,12 +93,16 @@ namespace ToDo.Controllers
             return View(task);
         }
         
-        [Authorize]
         [HttpPost, ActionName("Edit")]
         public async Task<IActionResult> EditTask(int id, int listId)
         {
+            if (!await IsAuthenticated(listId))
+            {
+                return Unauthorized();
+            }
+            
             var task = await _context.Tasks.FirstOrDefaultAsync(x => x.Id == id);
-
+            
             if (await TryUpdateModelAsync(task, "", s => s.Name, s => s.Description, s => s.Deadline, s => s.IsDone))
             {
                 await _context.SaveChangesAsync();
@@ -95,10 +112,13 @@ namespace ToDo.Controllers
             return RedirectToAction("Index", new {id = listId});
         }
         
-        [Authorize]
         [HttpGet, ActionName("Details")]
         public async Task<IActionResult> Details(int? id, int? listId)
         {
+            if (!await IsAuthenticated(listId ?? default(int)))
+            {
+                return Unauthorized();
+            }
         
             var task = await _context.Tasks.FindAsync(id);
             if (task == null)
@@ -116,9 +136,13 @@ namespace ToDo.Controllers
             return View(task);
         }
         
-        [Authorize]
         public async Task<IActionResult> Delete(int? id, int? listId)
         {
+            if (!await IsAuthenticated(listId ?? default(int)))
+            {
+                return Unauthorized();
+            }
+            
             var task = await _context.Tasks.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
             if (task == null)
             {
@@ -134,7 +158,6 @@ namespace ToDo.Controllers
             return View(task);
         }
         
-        [Authorize]
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id, int listId)
         {
@@ -148,7 +171,6 @@ namespace ToDo.Controllers
             return RedirectToAction("Index", new {id = listId});
         }
         
-        [Authorize]
         [HttpPost]
         public async void CheckBox(int? id, bool value)
         {
@@ -163,6 +185,13 @@ namespace ToDo.Controllers
             {
                 RedirectToAction(nameof(Index));
             }
+        }
+
+        public async Task<bool> IsAuthenticated(int listId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == User.Identity.Name);
+            var list = await _context.TaskLists.FindAsync(listId);
+            return list.ListsUser == user;
         }
     }
 }

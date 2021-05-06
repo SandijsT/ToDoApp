@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDo.Data;
 
 namespace ToDo.Data.Migartions
 {
     [DbContext(typeof(TaskContext))]
-    partial class TaskContextModelSnapshot : ModelSnapshot
+    [Migration("20210505151826_ninth")]
+    partial class ninth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,7 +170,7 @@ namespace ToDo.Data.Migartions
             modelBuilder.Entity("ToDo.Models.Entities.TaskList", b =>
                 {
                     b.HasOne("ToDo.Models.Entities.User", "ListsUser")
-                        .WithMany()
+                        .WithMany("UserTaskLists")
                         .HasForeignKey("ListsUserId");
 
                     b.Navigation("ListsUser");
@@ -191,6 +193,11 @@ namespace ToDo.Data.Migartions
             modelBuilder.Entity("ToDo.Models.Entities.UrgentTaskList", b =>
                 {
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("ToDo.Models.Entities.User", b =>
+                {
+                    b.Navigation("UserTaskLists");
                 });
 #pragma warning restore 612, 618
         }

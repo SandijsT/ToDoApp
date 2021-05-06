@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDo.Data;
 
 namespace ToDo.Data.Migartions
 {
     [DbContext(typeof(TaskContext))]
-    partial class TaskContextModelSnapshot : ModelSnapshot
+    [Migration("20210505114023_eight")]
+    partial class eight
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,15 +87,15 @@ namespace ToDo.Data.Migartions
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ListsUserId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ListsUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TaskLists");
                 });
@@ -167,11 +169,9 @@ namespace ToDo.Data.Migartions
 
             modelBuilder.Entity("ToDo.Models.Entities.TaskList", b =>
                 {
-                    b.HasOne("ToDo.Models.Entities.User", "ListsUser")
-                        .WithMany()
-                        .HasForeignKey("ListsUserId");
-
-                    b.Navigation("ListsUser");
+                    b.HasOne("ToDo.Models.Entities.User", null)
+                        .WithMany("UserTaskLists")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("ToDo.Models.Entities.User", b =>
@@ -191,6 +191,11 @@ namespace ToDo.Data.Migartions
             modelBuilder.Entity("ToDo.Models.Entities.UrgentTaskList", b =>
                 {
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("ToDo.Models.Entities.User", b =>
+                {
+                    b.Navigation("UserTaskLists");
                 });
 #pragma warning restore 612, 618
         }

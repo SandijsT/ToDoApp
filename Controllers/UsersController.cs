@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +24,10 @@ namespace ToDo.Controllers
 
         public IActionResult Register()
         {
+            if(User?.Identity != null && User.Identity.IsAuthenticated )
+            {
+                return RedirectToAction("Index","Home");
+            }
             return View();
         }
         
@@ -51,6 +54,10 @@ namespace ToDo.Controllers
 
         public IActionResult Login()
         {
+            if(User?.Identity != null && User.Identity.IsAuthenticated )
+            {
+                return RedirectToAction("Index","Home");
+            }
             return View();
         }
         
@@ -71,13 +78,21 @@ namespace ToDo.Controllers
             }
             
             var token = _tokenService.CreateToken(user);
+
             Response.Cookies.Append("auth", token);
             return RedirectToAction("Index", "TaskList");
+        }
+        
+        public ActionResult Logout()
+        {
+            Response.Cookies.Append("auth", "");
+            return RedirectToAction("Index", "Home");
         }
 
         private async Task<bool> UserExists(string username)
         {
             return await _context.Users.AnyAsync(x => x.Username.ToLower().Equals(username.ToLower()));
         }
+        
     }
 }

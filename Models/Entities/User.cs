@@ -1,4 +1,5 @@
-﻿namespace ToDo.Models.Entities
+﻿
+namespace ToDo.Models.Entities
 {
     public class User
     {

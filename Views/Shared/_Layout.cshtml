@@ -6,6 +6,11 @@
     <title>@ViewData["Title"] - ToDo</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script>
+        if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
+          location.reload();
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -27,6 +32,24 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="TaskList" asp-action="Index">TaskList</a>
                         </li>
+                        @if(User?.Identity != null && User.Identity.IsAuthenticated )
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
+                        </li>
+                        <li class="nav-item">
+                            <p class="nav-link text-dark">You're logged in as @User.Identity.Name</p>
+                        </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Register">Register</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

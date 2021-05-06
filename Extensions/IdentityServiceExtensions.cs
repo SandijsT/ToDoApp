@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -24,7 +27,6 @@ namespace ToDo.Extensions
                 {
                     options.Events = new JwtBearerEvents()
                     {
-                        //get cookie value
                         OnMessageReceived = context =>
                         {
                             var a = "";
