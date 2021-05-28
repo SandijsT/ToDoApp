@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using ToDo.Data;
 using ToDo.Models.Entities;
 
-
 namespace ToDo.Controllers
 {
     [Authorize]
@@ -53,6 +52,25 @@ namespace ToDo.Controllers
             }
 
             return RedirectToAction("Index", "Task", new { Id = id });
+        }
+        
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == User.Identity.Name);
+            var taskList = await _context.TaskLists.FindAsync(id);
+
+            if (taskList == null)
+            {
+                return RedirectToAction("Index");
+            }
+                        
+            if (user != taskList.ListsUser) return Unauthorized();
+            
+            _context.TaskLists.Remove(taskList);
+            _context.Tasks.Where(x => x.TaskList == taskList).ToList().ForEach(x => _context.Tasks.Remove(x));
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction("Index");
         }
     }
 }

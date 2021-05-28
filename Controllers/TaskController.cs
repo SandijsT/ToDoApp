@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ToDo.Data;
 using ToDo.Models.Entities;
 
@@ -170,6 +165,23 @@ namespace ToDo.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", new {id = listId});
         }
+
+        public async Task<IActionResult> Labels(int id)
+        {
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+            {
+                return RedirectToAction("Index", "TaskList");
+            }
+            if (!await IsAuthenticated(task.TaskList.Id))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == User.Identity.Name);
+            var labels = await _context.Labels.Where(x => x.User == user).ToListAsync();
+            return View(labels);
+        }
         
         [HttpPost]
         public async void CheckBox(int? id, bool value)
@@ -186,7 +198,7 @@ namespace ToDo.Controllers
                 RedirectToAction(nameof(Index));
             }
         }
-
+        
         public async Task<bool> IsAuthenticated(int listId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == User.Identity.Name);

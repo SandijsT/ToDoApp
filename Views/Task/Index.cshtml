@@ -5,27 +5,17 @@
     ViewBag.Title = "Your Tasks";
     Layout = "_Layout";
 }
-<h2>
-    @foreach (var list in Model)
+
+@foreach (var list in Model)
     {
-        @Html.DisplayFor(name => list.Name)
+        <a asp-action="Create" asp-route-listId="@Model.First().Id"><img class="cst-btn" src="/Images/add.svg" alt="ADD"></a>
+        <h2 class="align-middle">@Html.DisplayFor(name => list.Name)</h2>
     }
-</h2>
-@if (Model == null)
-{
-    <h2>MODEL IS NULL</h2>
-}
-else
-{
-    @foreach (var list in Model)
-    {
-        <a asp-action="Create" asp-route-listId="@Model.First().Id">Add new task</a>
-    }
-    <table class="table table-striped">
+    <table class="table">
             <thead class="thead-dark">
             <tr>
                 <th scope="col">Id</th>
-                <th scope="col">Task Completed</th>
+                <th scope="col">Progress</th>
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
                 <th scope="col">Deadline</th>
@@ -56,17 +46,15 @@ else
                                  });
                              }
                         </script>
-                        <td>@Html.DisplayFor(modelItem => task.Id)</td>
                         <td>@Html.DisplayFor(modelItem => task.Name)</td>
                         <td>@Html.DisplayFor(modelItem => task.Description)</td>
                         <td>@Html.DisplayFor(modelItem => task.Deadline)</td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id">Delete</a>
+                            <a asp-action="Edit" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id"><img class="cst-btn" src="/Images/edit.svg" alt="EDIT"></a>
+                            <a asp-action="Details" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id"><img class="cst-btn" src="/Images/details.svg" alt="DETAILS"></a>
+                            <a asp-action="Delete" asp-route-id="@task.Id" asp-route-listId="@task.TaskList.Id"><img class="cst-btn" src="/Images/delete.svg" alt="DELETE"></a>
                         </td>
                     </tr>
                 }
             }
         </table>
-}

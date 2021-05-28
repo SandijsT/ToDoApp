@@ -5,16 +5,20 @@
     Layout = "_Layout";
 }
 
-<h2>Task lists:</h2>
-
 <div>
-    <a asp-action="Create">Add new task list</a>
+    <a asp-action="Create"><img class="cst-btn" src="Images/add.svg" alt="ADD"></a>
+    <br>
     @foreach (var list in Model)
     {
-        <table class="table table-striped">
-            <a asp-action="Edit" asp-route-id="@list.Id">Edit</a>
+        <h2>@Html.DisplayFor(model => list.Name)</h2>
+        <table class="table table-borderless">
             <thead class="thead-dark">
-            <tr>@Html.DisplayFor(model => list.Name)</tr>
+                <tr>
+                    <th scope="col">Task</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Deadline</th>
+                    <th scope="col">Progress</th>
+                </tr>
             </thead>
             <tbody>
             @foreach (var task in list.Tasks)
@@ -22,9 +26,9 @@
                 <tr>
                     <td>@Html.DisplayFor(modelItem => task.Name)</td>
                     <td>@Html.DisplayFor(modelItem => task.Description)</td>
-                    <td>@Html.DisplayFor(modelItem => task.Deadline)</td>
-                     <td>@Html.CheckBoxFor(model => task.IsDone, new { onclick=$"customMethod({task.Id})", id = $"cb{task.Id}"})</td>
-                        <script>
+                    <td>@Html.DisplayFor(modelItem => task.Deadline, "{0:dd-MMM-yyyy}")</td>
+                    <td>@Html.CheckBoxFor(model => task.IsDone, new { onclick=$"customMethod({task.Id})", id = $"cb{task.Id}"})</td>
+                    <script>
                         function customMethod(cbId){
                             let val = $("#cb" + cbId).is(':checked');
                             console.log(val);
@@ -44,6 +48,8 @@
                 </tr>
             }
             </tbody>
+            <a asp-action="Edit" asp-route-id="@list.Id"><img class="cst-btn" src="Images/edit.svg" alt="EDIT"></a>
+            <a asp-action="Delete" asp-route-id="@list.Id"><img class="cst-btn" src="Images/delete.svg" alt="DELETE"></a>
         </table>
     }
 </div>

@@ -20,7 +20,7 @@ namespace ToDo.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "TaskList");
         }
 
         public IActionResult Privacy()

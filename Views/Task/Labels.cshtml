@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ToDo.Models.Entities.Label>
+@{
+    ViewBag.Title = "Add Labels";
+    Layout = "_Layout";
+}
+
+<h2>Add Labels:</h2>
+<div>
+    @foreach (var label in Model)
+    {
+        <ul>
+            <li class="form-check">
+            <input type="checkbox">
+                @Html.DisplayFor(modelItem => label.Name)
+                <span style="background-color: #@label.Color.ToString("X6"); border-radius: 50%; width:20px; height:20px; display: inline-block;"></span>
+            </li>
+        </ul>
+    }
+</div>

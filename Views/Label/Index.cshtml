@@ -1,0 +1,31 @@
+﻿@model IEnumerable<ToDo.Models.Entities.Label>
+
+@{
+    ViewBag.Title = "Your Labels";
+    Layout = "_Layout";
+}
+<div>
+    <a asp-action="Create"><img class="cst-btn" src="Images/add.svg" alt="ADD"></a>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Color</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var label in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => label.Name)</td>
+                    <td><span style="background-color: #@label.Color.ToString("X6"); border-radius: 50%; width:20px; height:20px; display: inline-block;"></span></td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@label.Id"><img class="cst-btn" src="Images/edit.svg" alt="EDIT"></a>
+                        <a asp-action="Delete" asp-route-id="@label.Id"><img class="cst-btn" src="Images/delete.svg" alt="DELETE"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>            
+</div>

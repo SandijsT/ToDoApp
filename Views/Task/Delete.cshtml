@@ -34,6 +34,7 @@
     <form asp-action="Delete" asp-route-listId="@Model.TaskList.Id">
         <input type="hidden" asp-for="Id">
         <input type="submit" value="Delete" class="btn btn-danger"> |
+        @Html.ActionLink("Edit", "Edit","Task", new { id =  Model.Id, listId = Model.TaskList.Id }, new { @class = "btn btn-primary" }) |
         <a asp-action="Index" asp-route-id="@Model.TaskList.Id">Back to your tasks</a>
     </form>
 </div>
